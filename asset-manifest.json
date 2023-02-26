@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/goit-react-hw-06-phonebook/static/css/main.77f4e703.css",
+    "main.js": "/goit-react-hw-06-phonebook/static/js/main.03c9472c.js",
+    "static/media/levender1.jpg": "/goit-react-hw-06-phonebook/static/media/levender1.69c32868049fce34cabb.jpg",
+    "index.html": "/goit-react-hw-06-phonebook/index.html",
+    "main.77f4e703.css.map": "/goit-react-hw-06-phonebook/static/css/main.77f4e703.css.map",
+    "main.03c9472c.js.map": "/goit-react-hw-06-phonebook/static/js/main.03c9472c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.77f4e703.css",
+    "static/js/main.03c9472c.js"
+  ]
+}
