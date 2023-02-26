@@ -1,7 +1,10 @@
 import styles from './contactForm.module.scss';
+import { useSelector, useDispatch } from 'react-redux';
+
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import initialState from './initialState';
+import { addContact } from 'redux/contactsSlice';
 
 const ContactForm = ({ onSubmit }) => {
   const [state, setState] = useState({ ...initialState });
