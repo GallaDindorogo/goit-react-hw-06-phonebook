@@ -1,35 +1,56 @@
+import { useSelector, useDispatch } from 'react-redux';
+
 import styles from './contactForm.module.scss';
 
-import { useState } from 'react';
-import PropTypes from 'prop-types';
-import initialState from './initialState';
+import { addContact } from 'redux/contactsSlice';
+import { getAllContacts } from 'redux/selectors';
 
-const ContactForm = ({ onSubmit }) => {
-  const [state, setState] = useState({ ...initialState });
-
-  const { name, number } = state;
-
-  const handleChange = ({ target }) => {
-    const { name, value } = target;
-    setState(prevState => {
-      return { ...prevState, [name]: value };
-    });
+const ContactForm = () => {
+  let inputValues = {
+    name: '',
+    number: '',
   };
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    onSubmit({ ...state });
-    setState({ ...initialState });
+  const items = useSelector(getAllContacts);
+  const dispatch = useDispatch();
+
+  const handleChange = e => {
+    const objectKey = e.target.name;
+    inputValues[objectKey] = e.target.value;
+    console.log(objectKey);
+    return;
+  };
+
+  const handleAddContact = data => {
+    const name = data.name;
+    if (items.find(contact => contact.name === name)) {
+      alert(`${name} is already in contacts`);
+      return;
+    }
+    const number = data.number;
+    const action = addContact({ name, number });
+    dispatch(action);
+  };
+
+  const clearForm = e => {
+    e.target.elements.name.value = '';
+    e.target.elements.number.value = '';
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form
+      className={styles.form}
+      onSubmit={e => {
+        e.preventDefault();
+        handleAddContact(inputValues);
+        clearForm(e);
+      }}
+    >
       <div className={styles.formGroup}>
         <label>Name</label>
         <input
           className={styles.inputName}
           name="name"
-          value={name}
           onChange={handleChange}
           placeholder="Name"
           type="text"
@@ -43,7 +64,6 @@ const ContactForm = ({ onSubmit }) => {
         <input
           className={styles.inputNumber}
           name="number"
-          value={number}
           onChange={handleChange}
           placeholder="tel.number"
           type="tel"
@@ -58,7 +78,3 @@ const ContactForm = ({ onSubmit }) => {
 };
 
 export default ContactForm;
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
