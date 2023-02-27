@@ -1,22 +1,20 @@
-import { useState, useEffect } from 'react';
-import { nanoid } from 'nanoid';
+import { useSelector, useDispatch } from 'react-redux';
 
-import styles from './my-books.module.scss';
 import ContactList from './ContactList/ContactList';
 import ContactFilter from './ContactFilter/ContactFilter';
-
 import ContactForm from './ContactForm/ContactForm';
 
-const MyBooks = () => {
-  const [items, setItems] = useState(() => {
-    const items = JSON.parse(localStorage.getItem('my-contact'));
-    return items ? items : [];
-  });
-  const [filter, setFilter] = useState('');
+import { addContact, deleteContact } from 'redux/contactsSlice';
+import { setFilter } from 'redux/filterSlice';
+import { getAllContacts, getFilter } from 'redux/selectors';
 
-  useEffect(() => {
-    localStorage.setItem('my-contact', JSON.stringify(items));
-  }, [items]);
+import styles from './my-books.module.scss';
+
+const MyBooks = () => {
+  const items = useSelector(getAllContacts);
+  const filter = useSelector(getFilter);
+
+  const dispatch = useDispatch();
 
   const isDublicate = (name, number) => {
     const normalizedName = name.toLowerCase();
@@ -27,28 +25,22 @@ const MyBooks = () => {
         number.toLowerCase() === normalizedNumber
       );
     });
+
     return Boolean(contact);
   };
 
-  const addContact = ({ name, number }) => {
+  const handleAddContact = ({ name, number }) => {
     if (isDublicate(name, number)) {
       return alert(`${name} tel.${number} is already in contacts`);
     }
-    setItems(prevItems => {
-      const newContact = {
-        id: nanoid(),
-        name,
-        number,
-      };
-      return [newContact, ...prevItems];
-    });
+    dispatch(addContact({ name, number }));
   };
 
-  const removeContact = id => {
-    setItems(prevItems => prevItems.filter(item => item.id !== id));
+  const handleDeleteContact = id => {
+    dispatch(deleteContact(id));
   };
 
-  const handleFilter = ({ target }) => setFilter(target.value);
+  const handleFilter = ({ target }) => dispatch(setFilter(target.value));
 
   const getVisibleContacts = () => {
     if (!filter) {
@@ -65,7 +57,6 @@ const MyBooks = () => {
   };
 
   const filtredContacts = getVisibleContacts();
-  // const isContacts = Boolean(filtredContacts.length);
 
   return (
     <div>
@@ -73,14 +64,17 @@ const MyBooks = () => {
       <div className={styles.wrapper}>
         <div className={styles.block}>
           <h4>Add new contact</h4>
-          <ContactForm onSubmit={addContact} />
+          <ContactForm onSubmit={handleAddContact} />
         </div>
         <div className={styles.block}>
           <h4 className={styles.titleContacts}>Contacts:</h4>
           <h4 className={styles.allContacts}>All contacts: {items.length}</h4>
           <ContactFilter handleChange={handleFilter} />
 
-          <ContactList removeContact={removeContact} items={filtredContacts} />
+          <ContactList
+            removeContact={handleDeleteContact}
+            items={filtredContacts}
+          />
         </div>
       </div>
     </div>
